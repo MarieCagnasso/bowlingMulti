@@ -25,7 +25,7 @@ public class MultiPlayer implements bowling.MultiPlayerGame{
     private String currentPlayerName;
     private SinglePlayerGame currentGame;
     
-    private boolean gameIsRunning = false;
+    private boolean start = false;
     
     MultiPlayer(){
         jeux = new LinkedHashMap<>();
@@ -42,16 +42,18 @@ public class MultiPlayer implements bowling.MultiPlayerGame{
             jeux.put(j, new SinglePlayerGame());
         }
         names = jeux.keySet().iterator();
-        gameIsRunning=true;
+        start=true;
         
         return displayMsg();
     }
 
     @Override
     public String lancer(int nbrQ) throws Exception {
-        
+        if (!start){
+            throw new Exception("Need game start");
+        }
         currentGame.lancer(nbrQ);
-        
+
         // si le tour est fini on change de joueur 
         if (currentGame.isFinished() || currentGame.hasCompletedFrame()) {
             currentPlayerName = names.next();
@@ -61,12 +63,16 @@ public class MultiPlayer implements bowling.MultiPlayerGame{
     }
 
     @Override
-    public int scoreFor(String arg0) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int scoreFor(String name) throws Exception {
+
+        if (!jeux.containsKey(name)){
+            throw new Exception("Unknown player");
+        }
+        return jeux.get(name).score();
     }
     
     public String displayMsg (){
-        if (!gameIsRunning){
+        if (!start){
             return END;
         }
         else{
