@@ -34,16 +34,20 @@ public class MultiPlayer implements bowling.MultiPlayerGame{
     @Override
     public String startNewGame(String[] players) throws Exception {
         if ((players == null) || players.length == 0) {
-			throw new Exception("Need at least one player");
+			throw new Exception("Need one player");
 	}
         jeux.clear();
         
         for (String j : players){
             jeux.put(j, new SinglePlayerGame());
         }
+        
         names = jeux.keySet().iterator();
         start=true;
         
+        currentPlayerName = names.next();
+        currentGame = jeux.get(currentPlayerName);
+
         return displayMsg();
     }
 
@@ -56,8 +60,16 @@ public class MultiPlayer implements bowling.MultiPlayerGame{
 
         // si le tour est fini on change de joueur 
         if (currentGame.isFinished() || currentGame.hasCompletedFrame()) {
+            if(!names.hasNext()){
+                names = jeux.keySet().iterator();
+            }
             currentPlayerName = names.next();
             currentGame = jeux.get(currentPlayerName);
+        }
+        
+        // Si la partie est fini 
+        if (currentGame.getFrameNumber() == 0){
+            start = false;
         }
         return displayMsg();
     }
@@ -71,16 +83,13 @@ public class MultiPlayer implements bowling.MultiPlayerGame{
         return jeux.get(name).score();
     }
     
+    /*** Affiche l'état de la partie ***/
     public String displayMsg (){
         if (!start){
             return END;
         }
         else{
-            String jname = currentPlayerName;
-            int tour = currentGame.getFrameNumber();
-            int boul = currentGame.getNextBallNumber();
-            
-            return String.format(MSG, jname, tour, boul);
+            return String.format(MSG, currentPlayerName, currentGame.getFrameNumber(), currentGame.getNextBallNumber());
         }
     }
     

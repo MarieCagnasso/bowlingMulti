@@ -36,7 +36,25 @@ public class MultiPlayerTest {
             game.startNewGame(s);
         }
         
-       /* @Test
+        @Test 
+        public void lancerStrike () throws Exception{
+            game.startNewGame(players);
+            assertEquals("Prochain tir : joueur Paul, tour n° 1, boule n° 1",game.lancer(10)); 
+        }
+        
+        @Test
+        public void lancerSpareScore() throws Exception{
+            game.startNewGame(players);
+            game.lancer(5);
+            game.lancer(5);
+            game.lancer(5);
+            game.lancer(3);
+            game.lancer(5);
+            game.lancer(1);
+            assertEquals(21,game.scoreFor("John"));      
+        }
+        
+        @Test
         public void gameFinish() throws Exception{
             game.startNewGame(players);
             for (int t=0; t<10; t++){
@@ -44,7 +62,44 @@ public class MultiPlayerTest {
                     game.lancer(2);
                 }
             }
-            System.out.println(game.displayMsg());
-           
-        }*/
+            assertEquals("Partie terminée",game.displayMsg());
+        }
+        
+        @Test
+        public void winners () throws Exception{
+            game.startNewGame(players);
+           for (int t=0; t<24; t++){
+                game.lancer(10);
+           }
+            assertEquals("Partie terminée",game.displayMsg());
+            assertEquals(300,game.scoreFor("Paul"));
+            assertEquals(300,game.scoreFor("John"));
+            assertEquals("Partie terminée",game.displayMsg());
+        }
+        
+        @Test
+        public void looser () throws Exception{
+           game.startNewGame(players);
+           for (int t=0; t<40; t++){
+                game.lancer(0);
+           }
+            assertEquals("Partie terminée",game.displayMsg());
+            assertEquals(0,game.scoreFor("Paul"));
+            assertEquals(0,game.scoreFor("John"));
+        }
+        
+        @Test (expected = Exception.class)
+        public void lancerGameEnd () throws Exception{
+            game.startNewGame(players);
+           for (int t=0; t<24; t++){
+                game.lancer(10);
+           }
+           game.lancer(1);
+        }
+        
+        @Test (expected = Exception.class)
+        public void playerUnknow () throws Exception{
+            game.startNewGame(players);
+            game.scoreFor("Marie");
+        }
 }
